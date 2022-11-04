@@ -35,7 +35,7 @@ public class TestsUsersController
         var sut = new UsersController(mockUsersService.Object);
 
         //Act
-        var result = (OkObjectResult)await sut.Get();
+        await sut.Get();
 
         //Assert
         mockUsersService
