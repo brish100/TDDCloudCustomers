@@ -69,14 +69,24 @@ public class TestsUsersController
     [TestCase("1994-12-44", false)]
     [TestCase("1990-14-12", false)]
     public async Task Get_OnSuccess_ReturnsValidBirthDay(string birthDay, bool shouldSucceed) {
+        // Arrange
         DateTime? res = null;
+
+        // Assume
         try {
             res = DateTime.Parse(birthDay);
-            Assert.That(shouldSucceed.Equals(true));
+        }
+        catch {
+            // ignored
+        }
+
+        // Assert
+        if (shouldSucceed) {
             Assert.IsNotNull(res);
-        } catch {
-            Assert.That(shouldSucceed.Equals(false));
+            Assert.IsInstanceOf<DateTime>(res);
+        } else {
             Assert.IsNull(res);
+            Assert.IsNotInstanceOf<DateTime>(res);
         }
     }
 }
