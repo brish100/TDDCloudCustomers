@@ -1,15 +1,14 @@
 using CloudCustomers.API.Controllers;
 using CloudCustomers.API.Models;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Xunit;
+using NUnit.Framework;
 
 namespace CloudCustomers.UnitTests.Systems.Controllers;
 
 public class TestsUsersController
 {
-    [Fact]
+    [Test]
     public async Task Get_OnSuccess_ReturnsStatusCode200()
     {
         //Arrange
@@ -20,10 +19,10 @@ public class TestsUsersController
         var result = (OkObjectResult)await sut.Get();
 
         //Assert
-        result.StatusCode.Should().Be(200);
+        Assert.That(result.StatusCode.Equals(200));
     }
 
-    [Fact]
+    [Test]
     public async Task Get_OnSuccess_InvokeUserServiceExactlyOnce()
     {
         //Arrange
@@ -44,7 +43,7 @@ public class TestsUsersController
             );
     }
 
-    [Fact]
+    [Test]
     public async Task Get_OnSuccess_ReturnsListOfUsers()
     {
         //Arrange
@@ -59,8 +58,29 @@ public class TestsUsersController
         var result = await sut.Get();
 
         //Assert
-        result.Should().BeOfType<OkObjectResult>();
-        var objectResult = (OkObjectResult)result;
-        objectResult.Value.Should().BeOfType<List<User>>();
+        Assert.IsInstanceOf<OkObjectResult>(result);
+        var objectResult = (OkObjectResult) result;
+        Assert.IsInstanceOf<List<User>>(objectResult.Value);
+    }
+
+    [TestCase("1994-12-28", true)]
+    [TestCase("1899-12-28", true)]
+    [TestCase("19949-12-28", false)]
+    [TestCase("1994-12-44", false)]
+    [TestCase("1990-14-12", false)]
+    public async Task Get_OnSuccess_ReturnsValidUserObject(string birthDay, bool shouldSucceed)
+    {
+        DateTime? res = null;
+        try
+        {
+            res = DateTime.Parse(birthDay);
+            Assert.That(shouldSucceed.Equals(true));
+            Assert.IsNotNull(res);
+        }
+        catch
+        {
+            Assert.That(shouldSucceed.Equals(false));
+            Assert.IsNull(res);
+        }
     }
 }
