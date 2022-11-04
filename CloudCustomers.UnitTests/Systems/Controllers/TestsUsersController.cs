@@ -63,7 +63,8 @@ public class TestsUsersController
         Assert.IsInstanceOf<List<User>>(objectResult.Value);
     }
 
-    [TestCase("1994-12-28", true)]
+    [TestCase("2010-06-06", true)]
+    [TestCase("1993-10-04", true)]
     [TestCase("1899-12-28", true)]
     [TestCase("19949-12-28", false)]
     [TestCase("1994-12-44", false)]
@@ -75,8 +76,7 @@ public class TestsUsersController
         // Assume
         try {
             res = DateTime.Parse(birthDay);
-        }
-        catch {
+        } catch {
             // ignored
         }
 
@@ -88,5 +88,13 @@ public class TestsUsersController
             Assert.IsNull(res);
             Assert.IsNotInstanceOf<DateTime>(res);
         }
+    }
+
+    [TestCase("19949-12-28")]
+    [TestCase("1994-12-44")]
+    [TestCase("1990-14-12")]
+    public async Task Get_OnFailure_ThrowsExceptionOnInvalidDate(string birthDay) {
+        // Assume & Assert
+        Assert.Throws<FormatException>(() => DateTime.Parse(birthDay));
     }
 }
